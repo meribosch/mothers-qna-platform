@@ -1,0 +1,312 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Task Breakdown - Newborn Care Q&A Platform
+
+## Phase 1 (MVP) - Months 1-2
+
+### Backend Development
+- [ ] Set up project infrastructure
+  - [ ] Initialize backend framework (Node.js/Express or similar)
+  - [ ] Configure development environment
+  - [ ] Set up database (PostgreSQL/MongoDB)
+  - [ ] Configure cloud hosting environment
+
+- [ ] Implement user authentication system
+  - [ ] User registration and login endpoints
+  - [ ] Password reset functionality
+  - [ ] Email verification system
+  - [ ] JWT token management
+  - [ ] Basic user roles (user, moderator, admin)
+
+- [ ] Develop Q&A core functionality
+  - [ ] Create question posting endpoints
+  - [ ] Implement answer submission system
+  - [ ] Set up basic tagging system
+  - [ ] Create basic search functionality
+  - [ ] Implement image upload with basic moderation
+
+- [ ] Basic AI Integration
+  - [ ] Set up OpenAI/similar AI service integration
+  - [ ] Implement basic question-answering endpoint
+  - [ ] Add response filtering system
+  - [ ] Implement medical disclaimer system
+
+### Frontend Development
+- [ ] Set up frontend infrastructure
+  - [ ] Initialize React/Next.js project
+  - [ ] Configure build system
+  - [ ] Set up routing
+  - [ ] Implement state management
+
+- [ ] Create core UI components
+  - [ ] Design and implement navigation bar
+  - [ ] Create question submission form
+  - [ ] Build answer submission interface
+  - [ ] Design and implement user authentication forms
+  - [ ] Create basic profile page
+
+- [ ] Implement responsive design
+  - [ ] Mobile-first layout
+  - [ ] Responsive navigation
+  - [ ] Adaptive content display
+
+### Basic Moderation System
+- [ ] Implement content filtering
+  - [ ] Set up basic profanity filter
+  - [ ] Create report button functionality
+  - [ ] Build basic moderation dashboard
+  - [ ] Implement content removal system
+
+## Phase 2 - Months 3-4
+
+### Enhanced AI Capabilities
+- [ ] Improve AI response system
+  - [ ] Implement context-aware responses
+  - [ ] Add medical knowledge base integration
+  - [ ] Create response quality monitoring
+  - [ ] Implement AI response rating system
+
+### Community Features
+- [ ] Develop reputation system
+  - [ ] Design point allocation system
+  - [ ] Implement user badges
+  - [ ] Create achievement system
+  - [ ] Add verification system for experienced mothers
+
+- [ ] Enhanced interaction features
+  - [ ] Implement comment threading
+  - [ ] Add upvoting/downvoting system
+  - [ ] Create "Most Helpful" marking system
+  - [ ] Build notification system
+
+### Mobile Optimization
+- [ ] Optimize performance
+  - [ ] Implement lazy loading
+  - [ ] Add image optimization
+  - [ ] Optimize API calls
+  - [ ] Implement caching strategy
+
+- [ ] Enhance mobile UX
+  - [ ] Create mobile-specific UI components
+  - [ ] Implement touch-friendly interactions
+  - [ ] Add offline capabilities
+  - [ ] Optimize forms for mobile
+
+## Phase 3 - Months 5-6
+
+### Advanced Moderation Tools
+- [ ] Implement AI-powered content moderation
+  - [ ] Set up image content analysis
+  - [ ] Add text content analysis
+  - [ ] Create automated flagging system
+  - [ ] Implement moderation queue
+
+- [ ] Build advanced moderation dashboard
+  - [ ] Create moderator activity logs
+  - [ ] Add content review workflow
+  - [ ] Implement ban/warning system
+  - [ ] Add appeals process
+
+### Expert Verification System
+- [ ] Develop verification workflow
+  - [ ] Create credential submission system
+  - [ ] Implement verification review process
+  - [ ] Add badge assignment system
+  - [ ] Create expert directory
+
+### Search and Analytics
+- [ ] Enhanced search functionality
+  - [ ] Implement advanced filters
+  - [ ] Add tag-based search
+  - [ ] Create category navigation
+  - [ ] Add related questions feature
+
+- [ ] Analytics dashboard
+  - [ ] Implement user engagement tracking
+  - [ ] Create content quality metrics
+  - [ ] Add performance monitoring
+  - [ ] Build reporting system
+
+## Cross-Phase Tasks
+
+### Security & Compliance
+- [ ] Implement security measures
+  - [ ] Set up SSL/TLS
+  - [ ] Implement CSRF protection
+  - [ ] Add rate limiting
+  - [ ] Configure security headers
+
+- [ ] Privacy compliance
+  - [ ] Implement GDPR compliance
+  - [ ] Add privacy policy
+  - [ ] Create data retention policy
+  - [ ] Add user data export feature
+
+### Testing
+- [ ] Unit testing
+  - [ ] Backend API tests
+  - [ ] Frontend component tests
+  - [ ] AI integration tests
+  - [ ] Security tests
+
+- [ ] Integration testing
+  - [ ] API integration tests
+  - [ ] User flow tests
+  - [ ] Performance tests
+  - [ ] Cross-browser testing
+
+### Documentation
+- [ ] Technical documentation
+  - [ ] API documentation
+  - [ ] Setup guides
+  - [ ] Deployment procedures
+  - [ ] Security protocols
+
+- [ ] User documentation
+  - [ ] User guides
+  - [ ] FAQs
+  - [ ] Moderation guidelines
+  - [ ] Community guidelines
+
+## Dependencies and Prerequisites
+1. AI service provider account and API keys
+2. Cloud hosting environment
+3. Domain name and SSL certificate
+4. Email service provider
+5. Image storage solution
+6. Medical knowledge base access
+7. Professional medical advisor consultation
+
+## Risk Management Tasks
+- [ ] Create backup and recovery procedures
+- [ ] Implement data protection measures
+- [ ] Set up monitoring and alerting
+- [ ] Create incident response plan
+- [ ] Develop content moderation guidelines
+- [ ] Establish medical disclaimer protocols
+
+## Stakeholder Review Points
+- [ ] End of Phase 1 MVP review
+- [ ] Phase 2 features review
+- [ ] Phase 3 features review
+- [ ] Final security audit
+- [ ] Performance review
+- [ ] User acceptance testing
+
+## Relevant Files and Directory Structure
+
+### Backend Structure
+```
+backend/
+├── src/
+│   ├── controllers/
+│   │   ├── authController.ts         # User authentication logic
+│   │   ├── questionController.ts     # Question management
+│   │   ├── answerController.ts       # Answer management
+│   │   ├── userController.ts         # User profile management
+│   │   ├── moderationController.ts   # Content moderation
+│   │   └── aiController.ts           # AI integration logic
+│   ├── models/
+│   │   ├── User.ts                   # User model
+│   │   ├── Question.ts               # Question model
+│   │   ├── Answer.ts                 # Answer model
+│   │   ├── Tag.ts                    # Tags model
+│   │   └── Verification.ts           # Expert verification model
+│   ├── middleware/
+│   │   ├── auth.ts                   # Authentication middleware
+│   │   ├── validation.ts             # Input validation
+│   │   ├── moderation.ts             # Content moderation
+│   │   └── rateLimit.ts              # API rate limiting
+│   ├── services/
+│   │   ├── aiService.ts              # AI integration service
+│   │   ├── emailService.ts           # Email notifications
+│   │   ├── imageService.ts           # Image handling
+│   │   └── moderationService.ts      # Content moderation service
+│   ├── routes/
+│   │   ├── auth.ts                   # Authentication routes
+│   │   ├── questions.ts              # Question routes
+│   │   ├── answers.ts                # Answer routes
+│   │   └── users.ts                  # User routes
+│   └── config/
+│       ├── database.ts               # Database configuration
+│       ├── ai.ts                     # AI service configuration
+│       └── security.ts               # Security settings
+├── tests/
+│   ├── unit/                         # Unit tests
+│   └── integration/                  # Integration tests
+└── package.json
+
+### Frontend Structure
+```
+frontend/
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Button.tsx           # Reusable button component
+│   │   │   ├── Input.tsx            # Form input component
+│   │   │   └── Modal.tsx            # Modal component
+│   │   ├── questions/
+│   │   │   ├── QuestionForm.tsx     # Question submission form
+│   │   │   ├── QuestionList.tsx     # List of questions
+│   │   │   └── QuestionDetail.tsx   # Single question view
+│   │   ├── answers/
+│   │   │   ├── AnswerForm.tsx       # Answer submission form
+│   │   │   └── AnswerList.tsx       # List of answers
+│   │   ├── auth/
+│   │   │   ├── Login.tsx            # Login form
+│   │   │   └── Register.tsx         # Registration form
+│   │   └── profile/
+│   │       ├── UserProfile.tsx      # User profile page
+│   │       └── ExpertBadge.tsx      # Expert verification badge
+│   ├── pages/
+│   │   ├── Home.tsx                 # Homepage
+│   │   ├── Questions.tsx            # Questions listing page
+│   │   ├── QuestionDetail.tsx       # Single question page
+│   │   └── Profile.tsx              # User profile page
+│   ├── hooks/
+│   │   ├── useAuth.ts               # Authentication hook
+│   │   ├── useQuestions.ts          # Questions data hook
+│   │   └── useModeration.ts         # Moderation hook
+│   ├── services/
+│   │   ├── api.ts                   # API client
+│   │   ├── auth.ts                  # Auth service
+│   │   └── storage.ts               # Local storage service
+│   ├── styles/
+│   │   ├── global.css               # Global styles
+│   │   └── theme.ts                 # Theme configuration
+│   └── utils/
+│       ├── validation.ts            # Form validation
+│       └── formatting.ts            # Data formatting
+├── public/
+│   ├── images/                      # Static images
+│   └── icons/                       # UI icons
+└── package.json
+
+### Configuration Files
+```
+root/
+├── .env.example                     # Environment variables template
+├── docker-compose.yml               # Docker configuration
+├── nginx.conf                       # Nginx configuration
+├── README.md                        # Project documentation
+└── package.json                     # Root package.json
+```
+
+### Documentation Files
+```
+docs/
+├── api/
+│   ├── auth.md                      # Authentication API docs
+│   ├── questions.md                 # Questions API docs
+│   └── answers.md                   # Answers API docs
+├── setup/
+│   ├── development.md               # Development setup guide
+│   └── deployment.md                # Deployment guide
+└── guidelines/
+    ├── coding-standards.md          # Coding standards
+    ├── security.md                  # Security guidelines
+    └── moderation.md                # Content moderation guidelines
+```
