@@ -1,5 +1,5 @@
 {
-  "name": "mothers-qna-platform",
+  "name": "mothers-qna-platform-frontend",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -15,7 +15,13 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
-    "@supabase/supabase-js": "^2.49.8",
+    "@supabase/auth-js": "^2.69.1",
+    "@supabase/functions-js": "^2.4.4",
+    "@supabase/node-fetch": "^2.6.15",
+    "@supabase/postgrest-js": "^1.19.4",
+    "@supabase/realtime-js": "^2.11.9",
+    "@supabase/storage-js": "^2.7.1",
+    "@supabase/supabase-js": "^2.49.9",
     "clsx": "^2.1.1",
     "next": "15.3.3",
     "react": "^19.0.0",
