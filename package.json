@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm start",
+    "start": "node frontend/server.js",
     "install": "cd frontend && npm install"
   },
   "dependencies": {
