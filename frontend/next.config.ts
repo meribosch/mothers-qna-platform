@@ -2,6 +2,9 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
+  experimental: {
+    optimizeCss: true
+  },
   swcMinify: true,
   typescript: {
     ignoreBuildErrors: true // Only for development, remove in production
