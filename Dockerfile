@@ -25,6 +25,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # Build the application
 WORKDIR /app/frontend
 RUN npm run build
+# Debug: List the contents of the .next directory
+RUN ls -la .next/
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -40,7 +42,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/frontend/next.config.js ./
 COPY --from=builder /app/frontend/package.json ./
 COPY --from=builder /app/frontend/public ./public
-COPY --from=builder /app/frontend/.next/standalone/frontend/* ./
+COPY --from=builder /app/frontend/.next/standalone/* ./
 COPY --from=builder /app/frontend/.next/static ./.next/static
 
 # Set the correct permission for prerender cache
