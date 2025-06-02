@@ -37,7 +37,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
-COPY --from=builder /app/frontend/next.config.ts ./frontend/
+COPY --from=builder /app/frontend/next.config.js ./frontend/
 COPY --from=builder /app/frontend/package.json ./frontend/
 COPY --from=builder /app/frontend/public ./frontend/public
 COPY --from=builder /app/frontend/.next/standalone ./

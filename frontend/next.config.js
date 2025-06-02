@@ -5,7 +5,6 @@ const nextConfig = {
   experimental: {
     optimizeCss: true
   },
-  swcMinify: true,
   typescript: {
     ignoreBuildErrors: true // Only for development, remove in production
   },
@@ -14,4 +13,4 @@ const nextConfig = {
   }
 }
 
-module.exports = nextConfig
+module.exports = nextConfig 
