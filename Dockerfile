@@ -37,14 +37,14 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy necessary files
-COPY --from=builder /app/frontend/next.config.js ./frontend/
-COPY --from=builder /app/frontend/package.json ./frontend/
-COPY --from=builder /app/frontend/public ./frontend/public
-COPY --from=builder /app/frontend/.next/standalone ./
-COPY --from=builder /app/frontend/.next/static ./frontend/.next/static
+COPY --from=builder /app/frontend/next.config.js ./
+COPY --from=builder /app/frontend/package.json ./
+COPY --from=builder /app/frontend/public ./public
+COPY --from=builder /app/frontend/.next/standalone/frontend/* ./
+COPY --from=builder /app/frontend/.next/static ./.next/static
 
 # Set the correct permission for prerender cache
-RUN mkdir -p /app/frontend/.next/cache && chown -R nextjs:nodejs /app/frontend/.next
+RUN mkdir -p ./.next/cache && chown -R nextjs:nodejs ./.next
 
 USER nextjs
 
@@ -57,5 +57,4 @@ ENV HOSTNAME "0.0.0.0"
 ENV NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
-WORKDIR /app/frontend
 CMD ["node", "server.js"] 
