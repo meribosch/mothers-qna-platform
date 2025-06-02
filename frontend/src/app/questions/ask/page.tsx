@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { QuestionForm } from '@/components/questions/QuestionForm';
 import { useAuthStore } from '@/stores/auth.store';
