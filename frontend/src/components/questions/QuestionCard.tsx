@@ -1,78 +1,64 @@
+'use client';
+
+import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
-import { formatDate } from '@/lib/utils';
+import { Database } from '@/lib/database.types';
+
+type Question = Database['public']['Tables']['momsquestions']['Row'] & {
+  user: {
+    email: string;
+    user_metadata: {
+      name?: string;
+    };
+  };
+  answers: { count: number };
+  question_tags: {
+    tags: {
+      name: string;
+    };
+  }[];
+};
 
 interface QuestionCardProps {
-  question: {
-    id: string;
-    title: string;
-    content: string;
-    createdAt: string;
-    author: {
-      name: string;
-      avatar?: string;
-    };
-    tags: string[];
-    answersCount: number;
-    votes: number;
-  };
+  question: Question;
 }
 
 export function QuestionCard({ question }: QuestionCardProps) {
+  const authorName = question.user?.user_metadata?.name || question.user?.email?.split('@')[0] || 'Anonymous';
+  const answersCount = question.answers?.count || 0;
+  const tags = question.question_tags?.map(qt => qt.tags.name) || [];
+
   return (
-    <div className="flex gap-4 py-6">
-      {/* Stats */}
-      <div className="flex flex-col items-center gap-1 text-sm text-gray-500">
-        <div className="flex flex-col items-center">
-          <span className="font-medium">{question.votes}</span>
-          <span>votes</span>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="font-medium">{question.answersCount}</span>
-          <span>answers</span>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1">
-        <h3 className="text-xl font-semibold text-gray-900">
-          <Link href={`/questions/${question.id}`} className="hover:text-indigo-600">
-            {question.title}
+    <div className="bg-white shadow rounded-lg p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <Link 
+            href={`/questions/${question.id}`}
+            className="text-lg font-semibold text-gray-900 hover:text-indigo-600"
+          >
+            {question.content.length > 150 
+              ? `${question.content.substring(0, 150)}...` 
+              : question.content}
           </Link>
-        </h3>
-        <p className="mt-2 text-sm text-gray-600 line-clamp-2">{question.content}</p>
-        
-        {/* Tags */}
-        <div className="mt-4 flex gap-2">
-          {question.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/tags/${tag}`}
-              className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
-            >
-              {tag}
-            </Link>
-          ))}
-        </div>
-
-        {/* Meta */}
-        <div className="mt-4 flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            {question.author.avatar ? (
-              <img
-                src={question.author.avatar}
-                alt={question.author.name}
-                className="h-6 w-6 rounded-full"
-              />
-            ) : (
-              <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
-                <span className="text-xs font-medium text-indigo-700">
-                  {question.author.name.charAt(0)}
-                </span>
-              </div>
-            )}
-            <span className="text-gray-600">{question.author.name}</span>
+          <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
+            <span>Asked by {authorName}</span>
+            <span>•</span>
+            <span>{formatDistanceToNow(new Date(question.created_at), { addSuffix: true })}</span>
+            <span>•</span>
+            <span>{answersCount} {answersCount === 1 ? 'answer' : 'answers'}</span>
           </div>
-          <span className="text-gray-500">asked {formatDate(question.createdAt)}</span>
+          {tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

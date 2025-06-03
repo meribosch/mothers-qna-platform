@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
@@ -5,7 +7,7 @@ import { useAuthStore } from '@/stores/auth.store';
 
 export function RegisterForm() {
   const router = useRouter();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { setUser, signInWithGoogle } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,17 +44,27 @@ export function RegisterForm() {
           data: {
             name: formData.name,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
       if (error) throw error;
 
       setUser(data.user);
-      router.push('/');
+      router.push('/auth/verify');
     } catch (error: any) {
       setError(error.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setError(null);
+      await signInWithGoogle();
+    } catch (error: any) {
+      setError(error.message);
     }
   };
 
@@ -163,7 +175,7 @@ export function RegisterForm() {
             <button
               type="button"
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-              onClick={() => {/* TODO: Implement Google Sign Up */}}
+              onClick={handleGoogleSignUp}
             >
               <span className="sr-only">Sign up with Google</span>
               <svg className="h-5 w-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24">

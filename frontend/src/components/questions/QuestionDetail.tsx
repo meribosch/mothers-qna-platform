@@ -1,118 +1,255 @@
-import { useState } from 'react';
-import { formatDate } from '@/lib/utils';
-import Link from 'next/link';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import { useAuthStore } from '@/stores/auth.store';
+import { questionsApi } from '@/lib/api/questions';
+import { answersApi } from '@/lib/api/answers';
+import { Database } from '@/lib/database.types';
+
+type Answer = Database['public']['Tables']['answers']['Row'] & {
+  user: {
+    email: string;
+    user_metadata: {
+      name?: string;
+    };
+  };
+};
+
+type QuestionWithAnswers = Database['public']['Tables']['momsquestions']['Row'] & {
+  user: {
+    email: string;
+    user_metadata: {
+      name?: string;
+    };
+  };
+  answers: Answer[];
+  question_tags: {
+    tags: {
+      name: string;
+    };
+  }[];
+};
 
 interface QuestionDetailProps {
-  question: {
-    id: string;
-    title: string;
-    content: string;
-    createdAt: string;
-    author: {
-      id: string;
-      name: string;
-      avatar?: string;
-    };
-    tags: string[];
-    votes: number;
-  };
-  onVote: (type: 'up' | 'down') => void;
+  questionId: number;
 }
 
-export function QuestionDetail({ question, onVote }: QuestionDetailProps) {
+export function QuestionDetail({ questionId }: QuestionDetailProps) {
   const { user } = useAuthStore();
-  const [isReporting, setIsReporting] = useState(false);
+  const [question, setQuestion] = useState<QuestionWithAnswers | null>(null);
+  const [newAnswer, setNewAnswer] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleReport = async () => {
-    setIsReporting(true);
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      try {
+        const data = await questionsApi.getQuestionById(questionId);
+        setQuestion(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load question');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestion();
+  }, [questionId]);
+
+  const handleSubmitAnswer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !newAnswer.trim()) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
     try {
-      // TODO: Implement report functionality
-    } catch (error) {
-      console.error('Failed to report question:', error);
+      const answer = await answersApi.createAnswer({
+        question_id: questionId,
+        user_id: user.id,
+        content: newAnswer.trim(),
+      });
+
+      // Fetch the user data for the new answer
+      const answerWithUser: Answer = {
+        ...answer,
+        user: {
+          email: user.email || '',
+          user_metadata: {
+            name: user.user_metadata?.name,
+          },
+        },
+      };
+
+      setQuestion((prev) => 
+        prev ? { ...prev, answers: [...prev.answers, answerWithUser] } : null
+      );
+      setNewAnswer('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to post answer');
     } finally {
-      setIsReporting(false);
+      setIsSubmitting(false);
     }
   };
 
+  const handleAcceptAnswer = async (answerId: number) => {
+    if (!user) return;
+
+    try {
+      const updatedAnswer = await answersApi.acceptAnswer(answerId);
+      setQuestion((prev) => {
+        if (!prev) return null;
+        const updatedAnswers = prev.answers.map((answer) => ({
+          ...answer,
+          is_accepted: answer.id === updatedAnswer.id ? true : false,
+        }));
+        return { ...prev, answers: updatedAnswers };
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to accept answer');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="animate-pulse space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-md bg-red-50 p-4">
+        <div className="text-sm text-red-700">{error}</div>
+      </div>
+    );
+  }
+
+  if (!question) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-sm font-semibold text-gray-900">Question not found</h3>
+      </div>
+    );
+  }
+
+  const authorName = question.user?.user_metadata?.name || question.user?.email?.split('@')[0] || 'Anonymous';
+  const tags = question.question_tags?.map(qt => qt.tags.name) || [];
+
   return (
-    <div className="bg-white">
-      <div className="flex gap-6">
-        {/* Voting */}
-        <div className="flex flex-col items-center gap-2">
-          <button
-            onClick={() => onVote('up')}
-            className="p-2 text-gray-500 hover:text-indigo-600 disabled:opacity-50"
-            disabled={!user}
-            title={user ? 'Vote up' : 'Sign in to vote'}
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-          </button>
-          <span className="text-lg font-medium text-gray-900">{question.votes}</span>
-          <button
-            onClick={() => onVote('down')}
-            className="p-2 text-gray-500 hover:text-indigo-600 disabled:opacity-50"
-            disabled={!user}
-            title={user ? 'Vote down' : 'Sign in to vote'}
-          >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900">{question.title}</h1>
-          <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
-            <span>Asked {formatDate(question.createdAt)}</span>
-            <span>by {question.author.name}</span>
+    <div className="space-y-8">
+      {/* Question */}
+      <div className="bg-white shadow rounded-lg p-6">
+        <div className="space-y-4">
+          <div className="text-lg text-gray-900">{question.content}</div>
+          
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <span>Asked by {authorName}</span>
+            <span>•</span>
+            <span>{formatDistanceToNow(new Date(question.created_at), { addSuffix: true })}</span>
           </div>
 
-          {/* Question content */}
-          <div className="prose prose-indigo mt-6 max-w-none">
-            <p className="whitespace-pre-wrap">{question.content}</p>
-          </div>
-
-          {/* Tags */}
-          <div className="mt-6 flex gap-2">
-            {question.tags.map((tag) => (
-              <Link
-                key={tag}
-                href={`/tags/${tag}`}
-                className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
-              >
-                {tag}
-              </Link>
-            ))}
-          </div>
-
-          {/* Actions */}
-          <div className="mt-6 flex items-center gap-4 border-t border-gray-200 pt-4">
-            {user && user.id !== question.author.id && (
-              <button
-                onClick={handleReport}
-                disabled={isReporting}
-                className="text-sm text-gray-500 hover:text-gray-700"
-              >
-                {isReporting ? 'Reporting...' : 'Report'}
-              </button>
-            )}
-            {user && user.id === question.author.id && (
-              <>
-                <Link
-                  href={`/questions/${question.id}/edit`}
-                  className="text-sm text-gray-500 hover:text-gray-700"
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
                 >
-                  Edit
-                </Link>
-                <button className="text-sm text-red-600 hover:text-red-700">Delete</button>
-              </>
-            )}
-          </div>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* Answers */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">
+          {question.answers.length} {question.answers.length === 1 ? 'Answer' : 'Answers'}
+        </h2>
+
+        {question.answers.map((answer) => {
+          const answerAuthorName = answer.user?.user_metadata?.name || answer.user?.email?.split('@')[0] || 'Anonymous';
+          const isQuestionAuthor = question.user_id === user?.id;
+          const canAcceptAnswer = isQuestionAuthor && !answer.is_accepted;
+
+          return (
+            <div
+              key={answer.id}
+              className={`bg-white shadow rounded-lg p-6 ${
+                answer.is_accepted ? 'border-2 border-green-500' : ''
+              }`}
+            >
+              <div className="space-y-4">
+                <div className="text-gray-900">{answer.content}</div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>Answered by {answerAuthorName}</span>
+                    <span>•</span>
+                    <span>
+                      {formatDistanceToNow(new Date(answer.created_at), { addSuffix: true })}
+                    </span>
+                  </div>
+
+                  {canAcceptAnswer && (
+                    <button
+                      onClick={() => handleAcceptAnswer(answer.id)}
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                    >
+                      Accept Answer
+                    </button>
+                  )}
+
+                  {answer.is_accepted && (
+                    <span className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full text-green-700 bg-green-100">
+                      Accepted Answer
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Answer Form */}
+        {user && (
+          <form onSubmit={handleSubmitAnswer} className="space-y-4">
+            <div>
+              <label htmlFor="answer" className="block text-sm font-medium text-gray-700">
+                Your Answer
+              </label>
+              <div className="mt-1">
+                <textarea
+                  id="answer"
+                  name="answer"
+                  rows={4}
+                  value={newAnswer}
+                  onChange={(e) => setNewAnswer(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="Share your knowledge or experience..."
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={isSubmitting || !newAnswer.trim()}
+                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Posting...' : 'Post Answer'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
