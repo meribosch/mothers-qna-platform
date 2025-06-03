@@ -1,14 +1,11 @@
 'use client';
 
-import { MainLayout } from '@/components/layout/MainLayout';
+import { PublicLayout } from '@/components/layout/PublicLayout';
 import Link from 'next/link';
-import { useAuthStore } from '@/stores/auth.store';
 
-export default function HomePage() {
-  const { user } = useAuthStore();
-
+export default function LandingPage() {
   return (
-    <MainLayout>
+    <PublicLayout showAuthLinks={false}>
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
           <div
@@ -30,37 +27,18 @@ export default function HomePage() {
               and connect with other moms who understand what you're going through.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              {user ? (
-                <>
-                  <Link
-                    href="/questions"
-                    className="rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Browse Questions
-                  </Link>
-                  <Link 
-                    href="/questions/ask" 
-                    className="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600"
-                  >
-                    Ask a Question <span aria-hidden="true">→</span>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/register"
-                    className="rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Join the Community
-                  </Link>
-                  <Link
-                    href="/auth/login"
-                    className="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600"
-                  >
-                    Sign in <span aria-hidden="true">→</span>
-                  </Link>
-                </>
-              )}
+              <Link
+                href="/auth/register"
+                className="rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Join the Community
+              </Link>
+              <Link
+                href="/auth/login"
+                className="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600"
+              >
+                Sign in <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -129,6 +107,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-    </MainLayout>
+    </PublicLayout>
   );
 }
