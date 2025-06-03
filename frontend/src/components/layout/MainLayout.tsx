@@ -2,13 +2,15 @@ import { ReactNode } from 'react';
 import { useAuthStore } from '@/stores/auth.store';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const { user, isLoading } = useAuthStore();
+  const router = useRouter();
+  const { user, isLoading, signOut } = useAuthStore();
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -16,6 +18,15 @@ export function MainLayout({ children }: MainLayoutProps) {
     { name: 'Tags', href: '/tags' },
     { name: 'Users', href: '/users' },
   ];
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -57,6 +68,12 @@ export function MainLayout({ children }: MainLayoutProps) {
                   <Link href="/profile" className="text-sm text-gray-500 hover:text-gray-700">
                     Profile
                   </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-sm text-gray-500 hover:text-gray-700"
+                  >
+                    Sign out
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center space-x-4">
