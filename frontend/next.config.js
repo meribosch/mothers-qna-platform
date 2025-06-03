@@ -6,18 +6,16 @@ const nextConfig = {
     optimizeCss: true
   },
   typescript: {
-    ignoreBuildErrors: true // Only for development, remove in production
+    // Comment out for production
+    // ignoreBuildErrors: true
   },
   eslint: {
-    ignoreDuringBuilds: true // Only for development, remove in production
+    // Comment out for production
+    // ignoreDuringBuilds: true
   },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://your-project.supabase.co',
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'your-anon-key'
-  },
-  // Disable static optimization for dynamic routes
-  experimental: {
-    optimizeCss: true
   },
   // Configure dynamic routes
   async rewrites() {
