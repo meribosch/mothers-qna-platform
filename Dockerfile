@@ -19,14 +19,15 @@ COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Add environment variables for build time
+ENV NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 # Build the application
 WORKDIR /app/frontend
-RUN npm run build
-# Debug: List the contents of the .next directory
-RUN ls -la .next/
+RUN npm run build || (cat .next/error.log && exit 1)
 
 # Production image, copy all the files and run next
 FROM base AS runner
