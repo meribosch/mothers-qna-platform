@@ -21,13 +21,9 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# Add environment variables for build time
-ENV NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-
 # Build the application
 WORKDIR /app/frontend
-RUN npm run build || (cat .next/error.log && exit 1)
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -53,9 +49,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
-
-# Add environment variables with default values
-ENV NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 CMD ["node", "frontend/server.js"] 
