@@ -4,8 +4,8 @@ globs:
 alwaysApply: false
 ---
 ---
-description:
-globs:
+description: Guide an AI assistant in creating a detailed Product Requirements
+globs: 
 alwaysApply: false
 ---
 # Rule: Generating a Product Requirements Document (PRD)

@@ -7,10 +7,11 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -35,16 +36,21 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   signUp: async (email: string, password: string) => {
+    set({ isLoading: true, error: null });
     try {
-      set({ isLoading: true, error: null });
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+        },
       });
       if (error) throw error;
       set({ user: data.user });
+      return { data, error: null };
     } catch (error) {
       set({ error: error instanceof Error ? error.message : 'Failed to sign up' });
+      return { data: null, error };
     } finally {
       set({ isLoading: false });
     }
@@ -84,6 +90,23 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) throw error;
     } catch (error) {
       set({ error: error instanceof Error ? error.message : 'Failed to update password' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  signInWithGoogle: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+        },
+      });
+      if (error) throw error;
+    } catch (error) {
+      set({ error: error instanceof Error ? error.message : 'Google sign-in failed' });
     } finally {
       set({ isLoading: false });
     }
